@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Test::Deep;
 use Protocol::Notifo;
 use MIME::Base64 'decode_base64';
 
@@ -22,6 +23,33 @@ is($n->{base_url}, 'https://api.notifo.com/v1',
 is(decode_base64($n->{auth_hdr}),
   'me:my_key', '... and the authorization header is perfect');
 isnt(substr($n->{auth_hdr}, -1), "\n", '... without a newline at the end');
+
+
+### Config files
+my @test_cases = (
+  [ 't/data/cfg1.rc',
+    { api_key  => "key1",
+      auth_hdr => "dXNlcjE6a2V5MQ==",
+      base_url => "https://api.notifo.com/v1",
+      user     => "user1"
+    }
+  ],
+  [ 't/data/cfg2.rc',
+    { api_key  => "key2",
+      auth_hdr => "dXNlcjI6a2V5Mg==",
+      base_url => "https://api.notifo.com/v1",
+      user     => "user2"
+    }
+  ]
+);
+
+for my $tc (@test_cases) {
+  my ($cfg, $attr) = @$tc;
+
+  local $ENV{NOTIFO_CFG} = $cfg;
+  lives_ok sub { $n = Protocol::Notifo->new }, "Build object ok with '$cfg'";
+  cmp_deeply({%$n}, $attr, '... with the expected attrs');
+}
 
 
 ### Bad boys
