@@ -6,6 +6,8 @@ use Test::More;
 use Test::Exception;
 use Test::Deep;
 use Protocol::Notifo;
+use File::HomeDir;
+use File::Spec::Functions 'catfile';
 use MIME::Base64 'decode_base64';
 
 my $n;
@@ -23,6 +25,12 @@ is($n->{base_url}, 'https://api.notifo.com/v1',
 is(decode_base64($n->{auth_hdr}),
   'me:my_key', '... and the authorization header is perfect');
 isnt(substr($n->{auth_hdr}, -1), "\n", '... without a newline at the end');
+
+is(
+  $n->config_file,
+  catfile(File::HomeDir->my_home, '.notifo.rc'),
+  'Use home_dir config file'
+);
 
 
 ### Config files
@@ -49,6 +57,7 @@ for my $tc (@test_cases) {
   local $ENV{NOTIFO_CFG} = $cfg;
   lives_ok sub { $n = Protocol::Notifo->new }, "Build object ok with '$cfg'";
   cmp_deeply({%$n}, $attr, '... with the expected attrs');
+  is($n->config_file, $cfg, '... and it used the expected cfg file');
 }
 
 

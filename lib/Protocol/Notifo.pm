@@ -57,11 +57,17 @@ sub send_notification {
   return \%call;
 }
 
+sub config_file {
+  my ($self) = @_;
+
+  return $ENV{NOTIFO_CFG} || catfile(File::HomeDir->my_home, '.notifo.rc');
+}
+
 sub _read_config_file {
   my ($self) = @_;
   my %opts;
 
-  my $fn = $ENV{NOTIFO_CFG} || catfile(File::HomeDir->my_home, '.notifo.rc');
+  my $fn = $self->config_file;
   return \%opts unless -r $fn;
 
   open(my $fh, '<', $fn) || confess("Could not open file '$fn': $!, ");
