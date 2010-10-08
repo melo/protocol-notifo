@@ -33,5 +33,26 @@ sub parse_response {
   return $res;
 }
 
+sub send_notification {
+  my ($self, %args) = @_;
+
+  my %call = (
+    url     => "$self->{base_url}/send_notification",
+    method  => 'POST',
+    headers => {Authorization => $self->{auth_hdr}},
+    args    => {},
+  );
+
+  for my $f (qw( to msg label title uri )) {
+    my $v = $args{$f};
+    next unless defined $v;
+
+    $call{args}{$f} = $v;
+  }
+
+  confess("Missing required argument 'msg', ") unless $call{args}{msg};
+
+  return \%call;
+}
 
 1;
