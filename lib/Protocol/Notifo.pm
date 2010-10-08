@@ -24,5 +24,14 @@ sub new {
   return $self;
 }
 
+sub parse_response {
+  my ($self, $http_code, $content) = @_;
+
+  my $res = decode_json($content);
+  $res->{http_code} = $http_code;
+
+  return $res;
+}
+
 
 1;
