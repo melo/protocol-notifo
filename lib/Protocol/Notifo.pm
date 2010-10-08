@@ -19,7 +19,7 @@ sub new {
   }
 
   $self->{base_url} = 'https://api.notifo.com/v1';
-  $self->{auth_hdr} = encode_base64(join(':', @$self{qw(user api_key)}));
+  $self->{auth_hdr} = encode_base64(join(':', @$self{qw(user api_key)}), '');
 
   return $self;
 }

@@ -21,6 +21,7 @@ is($n->{base_url}, 'https://api.notifo.com/v1',
   'The API endpoint is alright');
 is(decode_base64($n->{auth_hdr}),
   'me:my_key', '... and the authorization header is perfect');
+isnt(substr($n->{auth_hdr}, -1), "\n", '... without a newline at the end');
 
 
 ### Bad boys
