@@ -61,7 +61,7 @@ my @test_cases = (
       field_2            => 'two'
     },
     { http_response_code => 500,
-      http_status_line   => '402 OK OK OK',
+      http_status_line   => '500 no way',
       status             => "error",
       response_code      => -1,
       response_message   => "500 no way",
