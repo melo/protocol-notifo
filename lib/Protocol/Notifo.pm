@@ -31,10 +31,11 @@ sub new {
 
 
 sub parse_response {
-  my ($self, $http_code, $content) = @_;
+  my ($self, %args) = @_;
 
-  my $res = decode_json($content);
-  $res->{http_code} = $http_code;
+  my $res = decode_json(delete $args{http_body});
+  $res->{http_response_code} = delete $args{http_response_code};
+  $res->{other}              = \%args;
 
   return $res;
 }
@@ -184,8 +185,24 @@ of the L<notifo site|http://notifo.com/>.
 
 =head2 parse_response
 
-Accepts two parameters, a HTTP response code and the response content.
-It parses the content, adds the HTTP response code and returns a hashref
+Accepts a hash with response information. The following fields must be present:
+
+=over 4
+
+=item http_response_code
+
+The HTTP response code of the request.
+
+=item http_body
+
+The response content.
+
+=back
+
+Other fields might be passed, they will be ignored and returned in the
+C<other> field of the return value.
+
+This method parses the content, adds the HTTP response code and returns a hashref
 with all the fields.
 
 The following fields are present on all responses:
@@ -196,7 +213,7 @@ The following fields are present on all responses:
 
 A string, either C<success> or C<error>.
 
-=item http_code
+=item http_response_code
 
 The HTTP code of the response.
 
@@ -208,6 +225,10 @@ A notifo.com integer response code.
 
 A text description of the response. Specially useful when C<status>
 is C<error>.
+
+=item other
+
+All C<parse_response()> other parameters.
 
 =back
 
