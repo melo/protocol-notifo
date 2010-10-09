@@ -171,7 +171,7 @@ An example:
       uri => "http://www.example.com/welcome/"
     },
     headers => {
-      Authorization => "bWU6bXlfa2V5"
+      Authorization => "Basic bWU6bXlfa2V5"
     },
 
 The following keys are always present in the hashref:
@@ -203,7 +203,7 @@ sub send_notification {
   my %call = (
     url     => "$self->{base_url}/send_notification",
     method  => 'POST',
-    headers => {Authorization => $self->{auth_hdr}},
+    headers => {Authorization => "Basic $self->{auth_hdr}"},
     args    => {},
   );
 
