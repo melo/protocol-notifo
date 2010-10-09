@@ -14,7 +14,7 @@ lives_ok
 ok(defined($n), '... which, by the way, looks defined');
 
 my %common = (
-  headers => {Authorization => "bWU6bXlfa2V5"},
+  headers => {Authorization => "Basic bWU6bXlfa2V5"},
   method  => "POST",
   url     => "https://api.notifo.com/v1/send_notification",
 );

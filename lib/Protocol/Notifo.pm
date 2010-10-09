@@ -33,9 +33,18 @@ sub new {
 sub parse_response {
   my ($self, %args) = @_;
 
-  my $res = decode_json(delete $args{http_body});
-  $res->{http_response_code} = delete $args{http_response_code};
-  $res->{other}              = \%args;
+  my $res = {};
+  eval { $res = decode_json(delete $args{http_body}) };
+  if ($@) {
+    $res->{status}           = 'error';
+    $res->{response_code}    = -1;
+    $res->{response_message} = $args{http_status_line};
+  }
+
+  for my $k (qw( http_response_code http_status_line)) {
+    $res->{$k} = delete $args{$k};
+  }
+  $res->{other} = \%args;
 
   return $res;
 }
@@ -47,7 +56,7 @@ sub send_notification {
   my %call = (
     url     => "$self->{base_url}/send_notification",
     method  => 'POST',
-    headers => {Authorization => $self->{auth_hdr}},
+    headers => {Authorization => "Basic $self->{auth_hdr}"},
     args    => {},
   );
 
@@ -191,7 +200,11 @@ Accepts a hash with response information. The following fields must be present:
 
 =item http_response_code
 
-The HTTP response code of the request.
+The HTTP code of the response message.
+
+=item http_status_line
+
+The HTTP status line of the response message.
 
 =item http_body
 
@@ -215,7 +228,11 @@ A string, either C<success> or C<error>.
 
 =item http_response_code
 
-The HTTP code of the response.
+The HTTP code of the response message.
+
+=item http_status_line
+
+The HTTP status line of the response message.
 
 =item response_code
 
@@ -286,7 +303,7 @@ An example:
       uri => "http://www.example.com/welcome/"
     },
     headers => {
-      Authorization => "bWU6bXlfa2V5"
+      Authorization => "Basic bWU6bXlfa2V5"
     },
 
 The following keys are always present in the hashref:
