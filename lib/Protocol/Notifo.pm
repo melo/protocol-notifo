@@ -141,10 +141,10 @@ documentation where relevant.
 
 You need a notifo.com account to be able to use this module. The account
 will give you access to an API username, and an API key. Both are required
-arguments of our L<constructors|/"CONSTRUCTORS">.
+arguments of our L<constructors|/CONSTRUCTORS>.
 
 The module also supports a configuration file. See
-L<config_file()|/"config_file"> to learn which configuration file will
+L<config_file()|/config_file> to learn which configuration file will
 be loaded automatically, if found.
 
 For all the details of the notifo.com API, check out the site
@@ -158,8 +158,8 @@ Creates new C<Protocol::Notifo> object.
 
 It first tries to load default values from a configuration file. If you
 set the environment variable C<NOTIFO_CFG>, it will try that. If not, it
-will default to L<< File::HomeDir->my_home()|File::HomeDir/"my_home" >>. See
-section L<\"CONFIGURATION FILE"> for the format of those files.
+will default to L<< File::HomeDir->my_home()|File::HomeDir/my_home >>. See
+section L</"CONFIGURATION FILE"> for the format of those files.
 
 You can also pass a hash of options, that will override the defaults set
 by the configuration file. The following options are accepted:
@@ -302,7 +302,7 @@ or lines starting with # are ignored.
 All other lines are parsed for commands, in the form
 C<command separator value>. The C<separator> can be a C<=> or a C<:>.
 
-See the L<new() constructor|\"new"> for the commands you can use,
+See the L<new() constructor|/new> for the commands you can use,
 they are the same ones as the accepted options.
 
 =head1 TODO
