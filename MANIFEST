@@ -15,7 +15,6 @@ t/03-send_notification.t
 t/data/cfg1.rc
 t/data/cfg2.rc
 t/release-distmeta.t
-t/release-eol.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
