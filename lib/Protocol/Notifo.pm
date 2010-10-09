@@ -64,7 +64,11 @@ Accepts a hash with response information. The following fields must be present:
 
 =item http_response_code
 
-The HTTP response code of the request.
+The HTTP code of the response message.
+
+=item http_status_line
+
+The HTTP status line of the response message.
 
 =item http_body
 
@@ -88,7 +92,11 @@ A string, either C<success> or C<error>.
 
 =item http_response_code
 
-The HTTP code of the response.
+The HTTP code of the response message.
+
+=item http_status_line
+
+The HTTP status line of the response message.
 
 =item response_code
 
@@ -109,9 +117,18 @@ All C<parse_response()> other parameters.
 sub parse_response {
   my ($self, %args) = @_;
 
-  my $res = decode_json(delete $args{http_body});
-  $res->{http_response_code} = delete $args{http_response_code};
-  $res->{other}              = \%args;
+  my $res = {};
+  eval { $res = decode_json(delete $args{http_body}) };
+  if ($@) {
+    $res->{status}           = 'error';
+    $res->{response_code}    = -1;
+    $res->{response_message} = $args{http_status_line};
+  }
+
+  for my $k (qw( http_response_code http_status_line)) {
+    $res->{$k} = delete $args{$k};
+  }
+  $res->{other} = \%args;
 
   return $res;
 }
