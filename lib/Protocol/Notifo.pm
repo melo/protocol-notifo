@@ -313,7 +313,7 @@ Future versions of this module will implement the other APIs:
 
 =item send_message
 
-=over
+=back
 
 Patches welcome.
 
