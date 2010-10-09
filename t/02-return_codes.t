@@ -10,31 +10,42 @@ use Protocol::Notifo;
 my $n = Protocol::Notifo->new(user => 'me', api_key => 'mini_me');
 
 my @test_cases = (
-  [ [ 401,
-      '{ "status": "error", "response_code": 1100, "response_message": "An error occurred" }'
-    ],
-    { http_code        => 401,
-      status           => "error",
-      response_code    => 1100,
-      response_message => "An error occurred"
+  [ { http_response_code => 401,
+      http_body =>
+        '{ "status": "error", "response_code": 1100, "response_message": "An error occurred" }'
+    },
+    { http_response_code => 401,
+      status             => "error",
+      response_code      => 1100,
+      response_message   => "An error occurred",
+      other              => {}
     },
   ],
-  [ [ 402,
-      '{ "status": "error", "response_code": 1101, "response_message": "Invalid Credentials" }'
-    ],
-    { http_code        => 402,
-      status           => "error",
-      response_code    => 1101,
-      response_message => "Invalid Credentials"
+  [ { http_response_code => 402,
+      http_body =>
+        '{ "status": "error", "response_code": 1101, "response_message": "Invalid Credentials" }'
+    },
+    { http_response_code => 402,
+      status             => "error",
+      response_code      => 1101,
+      response_message   => "Invalid Credentials",
+      other              => {}
     },
   ],
-  [ [ 200,
-      '{ "status": "success", "response_code": 2201, "response_message": "OK" }'
-    ],
-    { http_code        => 200,
-      status           => "success",
-      response_code    => 2201,
-      response_message => "OK"
+  [ { http_response_code => 200,
+      http_body =>
+        '{ "status": "success", "response_code": 2201, "response_message": "OK" }',
+      field_1 => 'one',
+      field_2 => 'two'
+    },
+    { http_response_code => 200,
+      status             => "success",
+      response_code      => 2201,
+      response_message   => "OK",
+      other              => {
+        field_1 => 'one',
+        field_2 => 'two'
+      }
     },
   ],
 );
@@ -43,7 +54,7 @@ for my $tc (@test_cases) {
   my ($args, $expected) = @$tc;
 
   my $result;
-  lives_ok sub { $result = $n->parse_response(@$args) },
+  lives_ok sub { $result = $n->parse_response(%$args) },
     'Parsed response lived';
   cmp_deeply($result, $expected, '... data is as expected');
 }
