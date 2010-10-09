@@ -14,7 +14,145 @@ use File::HomeDir;
 use File::Spec::Functions qw( catfile );
 use namespace::clean;
 
-=constructor new
+sub new {
+  my ($class, %args) = @_;
+  my $self = bless $class->_read_config_file, $class;
+
+  for my $f (qw( user api_key )) {
+    $self->{$f} = $args{$f} if exists $args{$f};
+    confess("Missing required parameter '$f' to new(), ") unless $self->{$f};
+  }
+
+  $self->{base_url} = 'https://api.notifo.com/v1';
+  $self->{auth_hdr} = encode_base64(join(':', @$self{qw(user api_key)}), '');
+
+  return $self;
+}
+
+
+sub parse_response {
+  my ($self, $http_code, $content) = @_;
+
+  my $res = decode_json($content);
+  $res->{http_code} = $http_code;
+
+  return $res;
+}
+
+
+sub send_notification {
+  my ($self, %args) = @_;
+
+  my %call = (
+    url     => "$self->{base_url}/send_notification",
+    method  => 'POST',
+    headers => {Authorization => $self->{auth_hdr}},
+    args    => {},
+  );
+
+  for my $f (qw( to msg label title uri )) {
+    my $v = $args{$f};
+    next unless defined $v;
+
+    $call{args}{$f} = $v;
+  }
+
+  confess("Missing required argument 'msg', ") unless $call{args}{msg};
+
+  return \%call;
+}
+
+sub config_file {
+  my ($self) = @_;
+
+  return $ENV{NOTIFO_CFG} || catfile(File::HomeDir->my_home, '.notifo.rc');
+}
+
+
+sub _read_config_file {
+  my ($self) = @_;
+  my %opts;
+
+  my $fn = $self->config_file;
+  return \%opts unless -r $fn;
+
+  open(my $fh, '<', $fn) || confess("Could not open file '$fn': $!, ");
+
+  while (my $l = <$fh>) {
+    chomp($l);
+    $l =~ s/^\s*(#.*)?|\s*$//g;
+    next unless $l;
+
+    my ($k, $v) = $l =~ m/(\S+)\s*[=:]\s*(.*)/;
+    confess("Could not parse line $. of $fn ('$l'), ") unless $k;
+
+    $opts{$k} = $v;
+  }
+
+  return \%opts;
+}
+
+1;
+
+
+
+=pod
+
+=head1 NAME
+
+Protocol::Notifo - utilities to build requests for the notifo.com service
+
+=head1 VERSION
+
+version 0.001
+
+=head1 SYNOPSIS
+
+    ## Reads user and api_key from configuration file
+    my $pn = Protocol::Notifo->new;
+    
+    ## Use a particular user and api_key, overrides configuration file
+    my $pn = Protocol::Notifo->new(user => 'me', api_key => 'my_key');
+    
+    my $req = $pn->send_notification(msg => 'Hi!');
+    
+    .... send $req, get a response back ....
+    
+    my $res = $pn->parse_response($response_http_code, $response_body);
+    
+    .... do stuff with $res ....
+
+=head1 DESCRIPTION
+
+This module provides a API to prepare requests to the
+L<http://api.notifo.com/|notifo.com API>.
+
+The module doesn't actually execute a HTTP request. It only prepares
+all the information required for such request to be performed. As such
+this module is not to be used by end users, but by writters of the
+Notifo.com API.
+
+If you are an end-user and want to call the API, you should look into
+the modules L<WebService::Notifo> and L<AnyEvent::WebService::Notifo>.
+
+This module supports both the User API and the Service API.
+Differences between the behaviour of the two are noted in this
+documentation where relevant.
+
+You need a Notifo.com account to be able to use this module. The account
+will give you access to a API username, and a API key. Both are required
+arguments of our L</CONSTRUCTORS|constructors>.
+
+The module also supports a configuration file. See
+L</config_file|config_file()> to learn which configuration files are
+loaded automatically, if found.
+
+For all the details of this API, check out the site
+L<http://api.notifo.com/|http://api.notifo.com/>.
+
+=head1 CONSTRUCTORS
+
+=head2 new
 
 Creates new C<Protocol::Notifo> object.
 
@@ -42,24 +180,9 @@ Values for this two options can be found in the
 L<http://notifo.com/user/settings|user settings page> of
 L<http://notifo.com/|Notifo site>.
 
-=cut
-sub new {
-  my ($class, %args) = @_;
-  my $self = bless $class->_read_config_file, $class;
+=head1 METHODS
 
-  for my $f (qw( user api_key )) {
-    $self->{$f} = $args{$f} if exists $args{$f};
-    confess("Missing required parameter '$f' to new(), ") unless $self->{$f};
-  }
-
-  $self->{base_url} = 'https://api.notifo.com/v1';
-  $self->{auth_hdr} = encode_base64(join(':', @$self{qw(user api_key)}), '');
-
-  return $self;
-}
-
-
-=method parse_response
+=head2 parse_response
 
 Accepts two parameters, a HTTP response code and the response content.
 It parses the content, adds the HTTP response code and returns a hashref
@@ -88,18 +211,7 @@ C<status> C<error>.
 
 =back
 
-=cut
-sub parse_response {
-  my ($self, $http_code, $content) = @_;
-
-  my $res = decode_json($content);
-  $res->{http_code} = $http_code;
-
-  return $res;
-}
-
-
-=method send_notification
+=head2 send_notification
 
 Prepares a request for the C<send_notification> API.
 
@@ -176,40 +288,9 @@ A hashref with all the headers to include in the HTTP request.
 
 =back
 
-=cut
-sub send_notification {
-  my ($self, %args) = @_;
-
-  my %call = (
-    url     => "$self->{base_url}/send_notification",
-    method  => 'POST',
-    headers => {Authorization => $self->{auth_hdr}},
-    args    => {},
-  );
-
-  for my $f (qw( to msg label title uri )) {
-    my $v = $args{$f};
-    next unless defined $v;
-
-    $call{args}{$f} = $v;
-  }
-
-  confess("Missing required argument 'msg', ") unless $call{args}{msg};
-
-  return \%call;
-}
-
-=method config_file
+=head2 config_file
 
 Returns the configuration file that this module will attempt to use.
-
-=cut
-sub config_file {
-  my ($self) = @_;
-
-  return $ENV{NOTIFO_CFG} || catfile(File::HomeDir->my_home, '.notifo.rc');
-}
-
 
 =head1 CONFIGURATION FILE
 
@@ -221,80 +302,6 @@ C<command separator value>. The C<separator> can be a C<=> or a C<:>.
 
 See the L<CONSTRUCTORS|new() constructor> for the commands you can use,
 they are the same ones as the accepted options.
-
-=cut
-sub _read_config_file {
-  my ($self) = @_;
-  my %opts;
-
-  my $fn = $self->config_file;
-  return \%opts unless -r $fn;
-
-  open(my $fh, '<', $fn) || confess("Could not open file '$fn': $!, ");
-
-  while (my $l = <$fh>) {
-    chomp($l);
-    $l =~ s/^\s*(#.*)?|\s*$//g;
-    next unless $l;
-
-    my ($k, $v) = $l =~ m/(\S+)\s*[=:]\s*(.*)/;
-    confess("Could not parse line $. of $fn ('$l'), ") unless $k;
-
-    $opts{$k} = $v;
-  }
-
-  return \%opts;
-}
-
-1;
-
-__END__
-
-=head1 SYNOPSIS
-
-    ## Reads user and api_key from configuration file
-    my $pn = Protocol::Notifo->new;
-    
-    ## Use a particular user and api_key, overrides configuration file
-    my $pn = Protocol::Notifo->new(user => 'me', api_key => 'my_key');
-    
-    my $req = $pn->send_notification(msg => 'Hi!');
-    
-    .... send $req, get a response back ....
-    
-    my $res = $pn->parse_response($response_http_code, $response_body);
-    
-    .... do stuff with $res ....
-
-
-=head1 DESCRIPTION
-
-This module provides a API to prepare requests to the
-L<http://api.notifo.com/|notifo.com API>.
-
-The module doesn't actually execute a HTTP request. It only prepares
-all the information required for such request to be performed. As such
-this module is not to be used by end users, but by writters of the
-Notifo.com API.
-
-If you are an end-user and want to call the API, you should look into
-the modules L<WebService::Notifo> and L<AnyEvent::WebService::Notifo>.
-
-This module supports both the User API and the Service API.
-Differences between the behaviour of the two are noted in this
-documentation where relevant.
-
-You need a Notifo.com account to be able to use this module. The account
-will give you access to a API username, and a API key. Both are required
-arguments of our L</CONSTRUCTORS|constructors>.
-
-The module also supports a configuration file. See
-L</config_file|config_file()> to learn which configuration files are
-loaded automatically, if found.
-
-For all the details of this API, check out the site
-L<http://api.notifo.com/|http://api.notifo.com/>.
-
 
 =head1 TODO
 
@@ -310,5 +317,20 @@ Future versions of this module will implement the other APIs:
 
 Patches welcome.
 
+=head1 AUTHOR
+
+Pedro Melo <melo@simplicidade.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2010 by Pedro Melo.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0
 
 =cut
+
+
+__END__
+
