@@ -144,11 +144,11 @@ will give you access to an API username, and an API key. Both are required
 arguments of our L<constructors|/"CONSTRUCTORS">.
 
 The module also supports a configuration file. See
-L<config_file()|/"config_file"> to learn which configuration files are
-loaded automatically, if found.
+L<config_file()|/"config_file"> to learn which configuration file will
+be loaded automatically, if found.
 
-For all the details of this API, check out the site
-L<http://api.notifo.com/>.
+For all the details of the notifo.com API, check out the site
+L<https://api.notifo.com/>.
 
 =head1 CONSTRUCTORS
 
@@ -159,10 +159,10 @@ Creates new C<Protocol::Notifo> object.
 It first tries to load default values from a configuration file. If you
 set the environment variable C<NOTIFO_CFG>, it will try that. If not, it
 will default to L<< File::HomeDir->my_home()|File::HomeDir/"my_home" >>. See
-L<\"CONFIGURATION FILE"> for the format of the file.
+section L<\"CONFIGURATION FILE"> for the format of those files.
 
-You can also pass a hash of options, that will override the
-configuration file. The following options are accepted:
+You can also pass a hash of options, that will override the defaults set
+by the configuration file. The following options are accepted:
 
 =over 4
 
@@ -206,14 +206,16 @@ A notifo.com integer response code.
 
 =item response_message
 
-A text description of the response. Specially useful with
-C<status> C<error>.
+A text description of the response. Specially useful when C<status>
+is C<error>.
 
 =back
 
 =head2 send_notification
 
-Prepares a request for the C<send_notification> API.
+Prepares a request for the
+L<send_notification|https://api.notifo.com/docs/notifications#send_notification>
+API.
 
 Accepts a hash with options. The following options are supported:
 
@@ -300,7 +302,7 @@ or lines starting with # are ignored.
 All other lines are parsed for commands, in the form
 C<command separator value>. The C<separator> can be a C<=> or a C<:>.
 
-See the L<CONSTRUCTORS|new() constructor> for the commands you can use,
+See the L<new() constructor|\"new"> for the commands you can use,
 they are the same ones as the accepted options.
 
 =head1 TODO
