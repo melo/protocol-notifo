@@ -69,4 +69,8 @@ throws_ok sub { Protocol::Notifo->new(user => 'me') },
   qr/Missing required parameter 'api_key' to new[(][)], /,
   'new() with missing api_key, expected exception';
 
+throws_ok
+  sub { local $ENV{NOTIFO_CFG} = 't/data/bad_cfg.rc'; Protocol::Notifo->new },
+  qr/Could not parse line 1/, 'Bad cfg file croaks';
+
 done_testing();
