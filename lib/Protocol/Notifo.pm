@@ -17,11 +17,11 @@ Creates new C<Protocol::Notifo> object.
 
 It first tries to load default values from a configuration file. If you
 set the environment variable C<NOTIFO_CFG>, it will try that. If not, it
-will default to L<File::HomeDir/my_home|File::HomeDir->my_home()>. See
-L<CONFIGURATION FILE> for the format of the file.
+will default to L<< File::HomeDir->my_home()|File::HomeDir/my_home >>. See
+section L</"CONFIGURATION FILE"> for the format of those files.
 
-You can also pass a hash of options, that will override the
-configuration file. The following options are accepted:
+You can also pass a hash of options, that will override the defaults set
+by the configuration file. The following options are accepted:
 
 =over 4
 
@@ -36,8 +36,8 @@ The API key.
 =back
 
 Values for this two options can be found in the
-L<http://notifo.com/user/settings|user settings page> of
-L<http://notifo.com/|Notifo site>.
+L<user settings page|http://notifo.com/user/settings>
+of the L<notifo site|http://notifo.com/>.
 
 =cut
 sub new {
@@ -76,12 +76,12 @@ The HTTP code of the response.
 
 =item response_code
 
-A Notifo.com integer response code.
+A notifo.com integer response code.
 
 =item response_message
 
-A text description of the response. Specially useful with
-C<status> C<error>.
+A text description of the response. Specially useful when C<status>
+is C<error>.
 
 =back
 
@@ -98,7 +98,9 @@ sub parse_response {
 
 =method send_notification
 
-Prepares a request for the C<send_notification> API.
+Prepares a request for the
+L<send_notification|https://api.notifo.com/docs/notifications#send_notification>
+API.
 
 Accepts a hash with options. The following options are supported:
 
@@ -216,7 +218,7 @@ or lines starting with # are ignored.
 All other lines are parsed for commands, in the form
 C<command separator value>. The C<separator> can be a C<=> or a C<:>.
 
-See the L<CONSTRUCTORS|new() constructor> for the commands you can use,
+See the L<new() constructor|/new> for the commands you can use,
 they are the same ones as the accepted options.
 
 =cut
@@ -266,13 +268,13 @@ __END__
 
 =head1 DESCRIPTION
 
-This module provides a API to prepare requests to the
-L<http://api.notifo.com/|notifo.com API>.
+This module provides an API to prepare requests to the
+L<http://notifo.com/> service.
 
-The module doesn't actually execute a HTTP request. It only prepares
+The module doesn't actually execute the HTTP request. It only prepares
 all the information required for such request to be performed. As such
-this module is not to be used by end users, but by writters of the
-Notifo.com API.
+this module is not to be used by end users, but by writters of
+notifo.com API clients.
 
 If you are an end-user and want to call the API, you should look into
 the modules L<WebService::Notifo> and L<AnyEvent::WebService::Notifo>.
@@ -281,16 +283,16 @@ This module supports both the User API and the Service API.
 Differences between the behaviour of the two are noted in this
 documentation where relevant.
 
-You need a Notifo.com account to be able to use this module. The account
-will give you access to a API username, and a API key. Both are required
-arguments of our L</CONSTRUCTORS|constructors>.
+You need a notifo.com account to be able to use this module. The account
+will give you access to an API username, and an API key. Both are required
+arguments of our L<constructors|/CONSTRUCTORS>.
 
 The module also supports a configuration file. See
-L</config_file|config_file()> to learn which configuration files are
-loaded automatically, if found.
+L<config_file()|/config_file> to learn which configuration file will
+be loaded automatically, if found.
 
-For all the details of this API, check out the site
-L<http://api.notifo.com/|http://api.notifo.com/>.
+For all the details of the notifo.com API, check out the site
+L<https://api.notifo.com/>.
 
 
 =head1 TODO
