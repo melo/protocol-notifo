@@ -1,0 +1,50 @@
+{
+   "abstract" : "utilities to build requests for the notifo.com service",
+   "author" : [
+      "Pedro Melo <melo@simplicidade.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.102341, CPAN::Meta::Converter version 2.101670",
+   "license" : [
+      "artistic_2"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Protocol-Notifo",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.31"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Carp" : 0,
+            "File::HomeDir" : 0,
+            "File::Spec::Functions" : 0,
+            "JSON" : 0,
+            "MIME::Base64" : 0,
+            "namespace::clean" : 0
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::Deep" : 0,
+            "Test::Exception" : 0,
+            "Test::More" : "0.92"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "repository" : {
+         "type" : "git",
+         "url" : "http://github.com/melo/protocol-notifo.git",
+         "web" : "http://github.com/melo/protocol-notifo/"
+      }
+   },
+   "version" : "0.001"
+}
+
