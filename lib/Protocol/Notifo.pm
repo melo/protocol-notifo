@@ -1,6 +1,6 @@
 package Protocol::Notifo;
 
-# ABSTRACT: utilities to build the requests for the notifo.com service
+# ABSTRACT: utilities to build requests for the notifo.com service
 
 use strict;
 use warnings;
@@ -11,6 +11,35 @@ use File::HomeDir;
 use File::Spec::Functions qw( catfile );
 use namespace::clean;
 
+=constructor new
+
+Creates new C<Protocol::Notifo> object.
+
+It first tries to load default values from a configuration file. If you
+set the environment variable C<NOTIFO_CFG>, it will try that. If not, it
+will default to L<File::HomeDir/my_home|File::HomeDir->my_home()>. See
+L<CONFIGURATION FILE> for the format of the file.
+
+You can also pass a hash of options, that will override the
+configuration file. The following options are accepted:
+
+=over 4
+
+=item user
+
+The API username.
+
+=item api_key
+
+The API key.
+
+=back
+
+Values for this two options can be found in the
+L<http://notifo.com/user/settings|user settings page> of
+L<http://notifo.com/|Notifo site>.
+
+=cut
 sub new {
   my ($class, %args) = @_;
   my $self = bless $class->_read_config_file, $class;
@@ -26,6 +55,37 @@ sub new {
   return $self;
 }
 
+
+=method parse_response
+
+Accepts two parameters, a HTTP response code and the response content.
+It parses the content, adds the HTTP response code and returns a hashref
+with all the fields.
+
+The following fields are present on all responses:
+
+=over 4
+
+=item status
+
+A string, either C<success> or C<error>.
+
+=item http_code
+
+The HTTP code of the response.
+
+=item response_code
+
+A Notifo.com integer response code.
+
+=item response_message
+
+A text description of the response. Specially useful with
+C<status> C<error>.
+
+=back
+
+=cut
 sub parse_response {
   my ($self, $http_code, $content) = @_;
 
@@ -35,6 +95,85 @@ sub parse_response {
   return $res;
 }
 
+
+=method send_notification
+
+Prepares a request for the C<send_notification> API.
+
+Accepts a hash with options. The following options are supported:
+
+=over 4
+
+=item msg
+
+The notification message. This parameter is B<required>.
+
+=item to
+
+The destination user. If the API username/key pair used is of a User
+account, then this parameter is ignored and can be safelly ommited.
+
+A User account can only send notifications to itself. A Service account
+can send notifications to all his subscribed users.
+
+=item label
+
+A label describing the application that is sending the
+notification. With Service accounts, this option is ignored and the
+Service Name is used.
+
+=item title
+
+The title or subject of the notification.
+
+=item uri
+
+The URL for the event. On some clients you can click the notification and jump to this URL.
+
+=back
+
+The return value is a hashref with all the relevant information to
+perform the HTTP request: the url and the method to use, the
+Authorization header, and the query form fields.
+
+An example:
+
+    url    => "https://api.notifo.com/v1/send_notification",
+    method => "POST",
+    args   => {
+      label => "my application",
+      msg => "hello there!",
+      title => "welcome",
+      to => "user_x",
+      uri => "http://www.example.com/welcome/"
+    },
+    headers => {
+      Authorization => "bWU6bXlfa2V5"
+    },
+
+The following keys are always present in the hashref:
+
+=over 4
+
+=item url
+
+The URL where the HTTP request should be sent to.
+
+=item method
+
+The HTTP method to use.
+
+=item args
+
+A hashref with all the URL query form fields and values.
+
+=item headers
+
+A hashref with all the headers to include in the HTTP request.
+
+=back
+
+=cut
 sub send_notification {
   my ($self, %args) = @_;
 
@@ -57,12 +196,30 @@ sub send_notification {
   return \%call;
 }
 
+=method config_file
+
+Returns the configuration file that this module will attempt to use.
+
+=cut
 sub config_file {
   my ($self) = @_;
 
   return $ENV{NOTIFO_CFG} || catfile(File::HomeDir->my_home, '.notifo.rc');
 }
 
+
+=head1 CONFIGURATION FILE
+
+The configuration file is line based. Empty lines os just spaces/tabs,
+or lines starting with # are ignored.
+
+All other lines are parsed for commands, in the form
+C<command separator value>. The C<separator> can be a C<=> or a C<:>.
+
+See the L<CONSTRUCTORS|new() constructor> for the commands you can use,
+they are the same ones as the accepted options.
+
+=cut
 sub _read_config_file {
   my ($self) = @_;
   my %opts;
@@ -87,3 +244,68 @@ sub _read_config_file {
 }
 
 1;
+
+__END__
+
+=head1 SYNOPSIS
+
+    ## Reads user and api_key from configuration file
+    my $pn = Protocol::Notifo->new;
+    
+    ## Use a particular user and api_key, overrides configuration file
+    my $pn = Protocol::Notifo->new(user => 'me', api_key => 'my_key');
+    
+    my $req = $pn->send_notification(msg => 'Hi!');
+    
+    .... send $req, get a response back ....
+    
+    my $res = $pn->parse_response($response_http_code, $response_body);
+    
+    .... do stuff with $res ....
+
+
+=head1 DESCRIPTION
+
+This module provides a API to prepare requests to the
+L<http://api.notifo.com/|notifo.com API>.
+
+The module doesn't actually execute a HTTP request. It only prepares
+all the information required for such request to be performed. As such
+this module is not to be used by end users, but by writters of the
+Notifo.com API.
+
+If you are an end-user and want to call the API, you should look into
+the modules L<WebService::Notifo> and L<AnyEvent::WebService::Notifo>.
+
+This module supports both the User API and the Service API.
+Differences between the behaviour of the two are noted in this
+documentation where relevant.
+
+You need a Notifo.com account to be able to use this module. The account
+will give you access to a API username, and a API key. Both are required
+arguments of our L</CONSTRUCTORS|constructors>.
+
+The module also supports a configuration file. See
+L</config_file|config_file()> to learn which configuration files are
+loaded automatically, if found.
+
+For all the details of this API, check out the site
+L<http://api.notifo.com/|http://api.notifo.com/>.
+
+
+=head1 TODO
+
+Future versions of this module will implement the other APIs:
+
+=over 4
+
+=item subscribe_user
+
+=item send_message
+
+=back
+
+Patches welcome.
+
+
+=cut
