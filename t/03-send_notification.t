@@ -102,6 +102,8 @@ for my $tc (@test_cases) {
 
   lives_ok sub { $sn = $n->send_notification(@$in) },
     "send_notification() survived ($name)";
+    use Data::Dump qw(pp); print STDERR ">>>>>> ", pp($sn), "\n";
+    
   cmp_deeply(
     $sn,
     {%common, %$info, args => {@$out}},
