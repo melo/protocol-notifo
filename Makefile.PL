@@ -27,6 +27,7 @@ my %WriteMakefileArgs = (
     'Carp' => '0',
     'File::HomeDir' => '0',
     'File::Spec::Functions' => '0',
+    'HTTP::Request::Common' => '0',
     'JSON' => '0',
     'MIME::Base64' => '0',
     'namespace::clean' => '0'
