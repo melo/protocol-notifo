@@ -311,15 +311,17 @@ An example:
     url    => "https://api.notifo.com/v1/send_notification",
     method => "POST",
     args   => {
-      label => "my application",
-      msg => "hello there!",
-      title => "welcome",
-      to => "user_x",
-      uri => "http://www.example.com/welcome/"
+      label => "l",
+      msg   => "hello",
+      title => "t",
+      to    => "to"
     },
     headers => [
-      Authorization => "Basic bWU6bXlfa2V5",
+      "Authorization"  => "Basic bWU6bXlfa2V5",
+      "Content-Type"   => "application/x-www-form-urlencoded",
+      "Content-Length" => 31,
     ],
+    body => "msg=hello&to=to&title=t&label=l",
 
 The following keys are always present in the hashref:
 
@@ -340,6 +342,11 @@ A hashref with all the URL query form fields and values.
 =item headers
 
 A hashref with all the headers to include in the HTTP request.
+
+=item body
+
+The C<args> in C<application/x-www-form-urlencoded> form, can be used as
+the body of the HTTP request.
 
 =back
 
