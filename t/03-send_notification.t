@@ -23,44 +23,44 @@ my %common = (
 my @test_cases = (
   [ 'just msg',
     [msg => 'hello friend'],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 16,
-      },
+      ),
       body => 'msg=hello+friend',
     },
   ],
 
   [ 'msg and to',
     [msg => 'hello', to => 'to'],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 15,
-      },
+      ),
       body => all(re(qr/msg=hello/), re(qr/to=to/)),
     },
   ],
 
   [ 'msg, to, and label',
     [msg => 'hello', to => 'to', label => 'l'],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 23,
-      },
+      ),
       body => all(re(qr/msg=hello/), re(qr/to=to/), re(qr/label=l/)),
     },
   ],
 
   [ 'msg, to, label, and title',
     [msg => 'hello', to => 'to', label => 'l', title => 't'],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 31,
-      },
+      ),
       body => all(
         re(qr/msg=hello/), re(qr/to=to/), re(qr/label=l/), re(qr/title=t/)
       ),
@@ -69,11 +69,11 @@ my @test_cases = (
 
   [ 'all arguments',
     [msg => 'hello', to => 'to', label => 'l', title => 't', uri => 'u'],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 37,
-      },
+      ),
       body => all(
         re(qr/msg=hello/), re(qr/to=to/),
         re(qr/label=l/),   re(qr/title=t/),
@@ -84,11 +84,11 @@ my @test_cases = (
 
   [ 'undef arg',
     [msg => 'hello friend', to => undef],
-    { headers => {
+    { headers => bag(
         Authorization    => "Basic bWU6bXlfa2V5",
         'Content-Type'   => 'application/x-www-form-urlencoded',
         'Content-Length' => 16,
-      },
+      ),
       body => 'msg=hello+friend',
     },
     [msg => 'hello friend'],
