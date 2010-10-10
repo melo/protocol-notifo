@@ -179,7 +179,7 @@ Authorization header, and the query form fields.
 
 An example:
 
-    url    => "https://api.notifo.com/v1/send_notification",
+    url    => URI->new("https://api.notifo.com/v1/send_notification"),
     method => "POST",
     args   => {
       label => "l",
@@ -200,7 +200,8 @@ The following keys are always present in the hashref:
 
 =item url
 
-The URL where the HTTP request should be sent to.
+The L<URI> object representing the URL where the HTTP request should
+be sent to.
 
 =item method
 
@@ -297,7 +298,7 @@ sub _build_http_request {
   my ($req) = @_;
   my ($meth, $url, $args, $hdrs) = @$req{qw(method url args headers)};
 
-  my $uri = URI->new($url);
+  my $uri = $req->{url} = URI->new($url);
   $uri->query_form($args);
 
   $req->{body} = $uri->query;

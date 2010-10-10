@@ -15,7 +15,7 @@ ok(defined($n), '... which, by the way, looks defined');
 
 my %common = (
   method => "POST",
-  url    => "https://api.notifo.com/v1/send_notification",
+  url => any(isa('URI'), str("https://api.notifo.com/v1/send_notification")),
 );
 
 
