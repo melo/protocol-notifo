@@ -57,7 +57,7 @@ sub send_notification {
   my %call = (
     url     => "$self->{base_url}/send_notification",
     method  => 'POST',
-    headers => {Authorization => "Basic $self->{auth_hdr}"},
+    headers => [Authorization => "Basic $self->{auth_hdr}"],
     args    => {},
   );
 
@@ -317,9 +317,9 @@ An example:
       to => "user_x",
       uri => "http://www.example.com/welcome/"
     },
-    headers => {
-      Authorization => "Basic bWU6bXlfa2V5"
-    },
+    headers => [
+      Authorization => "Basic bWU6bXlfa2V5",
+    ],
 
 The following keys are always present in the hashref:
 
