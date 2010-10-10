@@ -9,6 +9,7 @@ use JSON 'decode_json';
 use MIME::Base64 'encode_base64';
 use File::HomeDir;
 use File::Spec::Functions qw( catfile );
+use URI ();
 use namespace::clean;
 
 =constructor new
@@ -181,15 +182,17 @@ An example:
     url    => "https://api.notifo.com/v1/send_notification",
     method => "POST",
     args   => {
-      label => "my application",
-      msg => "hello there!",
-      title => "welcome",
-      to => "user_x",
-      uri => "http://www.example.com/welcome/"
+      label => "l",
+      msg   => "hello",
+      title => "t",
+      to    => "to"
     },
-    headers => {
-      Authorization => "Basic bWU6bXlfa2V5"
-    },
+    headers => [
+      "Authorization"  => "Basic bWU6bXlfa2V5",
+      "Content-Type"   => "application/x-www-form-urlencoded",
+      "Content-Length" => 31,
+    ],
+    body => "msg=hello&to=to&title=t&label=l",
 
 The following keys are always present in the hashref:
 
@@ -211,6 +214,11 @@ A hashref with all the URL query form fields and values.
 
 A hashref with all the headers to include in the HTTP request.
 
+=item body
+
+The C<args> in C<application/x-www-form-urlencoded> form, can be used as
+the body of the HTTP request.
+
 =back
 
 =cut
@@ -220,7 +228,7 @@ sub send_notification {
   my %call = (
     url     => "$self->{base_url}/send_notification",
     method  => 'POST',
-    headers => {Authorization => "Basic $self->{auth_hdr}"},
+    headers => [Authorization => "Basic $self->{auth_hdr}"],
     args    => {},
   );
 
@@ -232,6 +240,8 @@ sub send_notification {
   }
 
   confess("Missing required argument 'msg', ") unless $call{args}{msg};
+
+  _build_http_request(\%call);
 
   return \%call;
 }
@@ -281,6 +291,18 @@ sub _read_config_file {
   }
 
   return \%opts;
+}
+
+sub _build_http_request {
+  my ($req) = @_;
+  my ($meth, $url, $args, $hdrs) = @$req{qw(method url args headers)};
+
+  my $uri = URI->new($url);
+  $uri->query_form($args);
+
+  $req->{body} = $uri->query;
+  push @$hdrs, 'Content-Type'   => 'application/x-www-form-urlencoded';
+  push @$hdrs, 'Content-Length' => length($req->{body});
 }
 
 1;
