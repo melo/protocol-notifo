@@ -115,6 +115,8 @@ sub _build_http_request {
   $req->{body} = $uri->query;
   push @$hdrs, 'Content-Type'   => 'application/x-www-form-urlencoded';
   push @$hdrs, 'Content-Length' => length($req->{body});
+
+  $uri->query_form([]);
 }
 
 1;
