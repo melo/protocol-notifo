@@ -14,34 +14,99 @@ lives_ok
 ok(defined($n), '... which, by the way, looks defined');
 
 my %common = (
-  headers => {Authorization => "Basic bWU6bXlfa2V5"},
-  method  => "POST",
-  url     => "https://api.notifo.com/v1/send_notification",
+  method => "POST",
+  url    => "https://api.notifo.com/v1/send_notification",
 );
 
 
 ### send_notification
 my @test_cases = (
-  ['just msg',           [msg => 'hello']],
-  ['msg and to',         [msg => 'hello', to => 'to']],
-  ['msg, to, and label', [msg => 'hello', to => 'to', label => 'l']],
+  [ 'just msg',
+    [msg => 'hello friend'],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 16,
+      },
+      body => 'msg=hello+friend',
+    },
+  ],
+
+  [ 'msg and to',
+    [msg => 'hello', to => 'to'],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 15,
+      },
+      body => all(re(qr/msg=hello/), re(qr/to=to/)),
+    },
+  ],
+
+  [ 'msg, to, and label',
+    [msg => 'hello', to => 'to', label => 'l'],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 23,
+      },
+      body => all(re(qr/msg=hello/), re(qr/to=to/), re(qr/label=l/)),
+    },
+  ],
+
   [ 'msg, to, label, and title',
-    [msg => 'hello', to => 'to', label => 'l', title => 't']
+    [msg => 'hello', to => 'to', label => 'l', title => 't'],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 31,
+      },
+      body => all(
+        re(qr/msg=hello/), re(qr/to=to/), re(qr/label=l/), re(qr/title=t/)
+      ),
+    },
   ],
+
   [ 'all arguments',
-    [msg => 'hello', to => 'to', label => 'l', title => 't', uri => 'u']
+    [msg => 'hello', to => 'to', label => 'l', title => 't', uri => 'u'],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 37,
+      },
+      body => all(
+        re(qr/msg=hello/), re(qr/to=to/),
+        re(qr/label=l/),   re(qr/title=t/),
+        re(qr/uri=u/)
+      ),
+    },
   ],
-  ['undef arg', [msg => 'hello', to => undef], [msg => 'hello']],
+
+  [ 'undef arg',
+    [msg => 'hello friend', to => undef],
+    { headers => {
+        Authorization    => "Basic bWU6bXlfa2V5",
+        'Content-Type'   => 'application/x-www-form-urlencoded',
+        'Content-Length' => 16,
+      },
+      body => 'msg=hello+friend',
+    },
+    [msg => 'hello friend'],
+  ],
 );
 
 my $sn;
 for my $tc (@test_cases) {
-  my ($name, $in, $out) = @$tc;
+  my ($name, $in, $info, $out) = @$tc;
   $out = $in unless $out;
 
   lives_ok sub { $sn = $n->send_notification(@$in) },
     "send_notification() survived ($name)";
-  cmp_deeply($sn, {%common, args => {@$out}}, '... with the expected result');
+  cmp_deeply(
+    $sn,
+    {%common, %$info, args => {@$out}},
+    '... with the expected result'
+  );
 }
 
 

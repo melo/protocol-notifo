@@ -9,6 +9,7 @@ use JSON 'decode_json';
 use MIME::Base64 'encode_base64';
 use File::HomeDir;
 use File::Spec::Functions qw( catfile );
+use URI ();
 use namespace::clean;
 
 =constructor new
@@ -233,6 +234,8 @@ sub send_notification {
 
   confess("Missing required argument 'msg', ") unless $call{args}{msg};
 
+  _build_http_request(\%call);
+
   return \%call;
 }
 
@@ -281,6 +284,18 @@ sub _read_config_file {
   }
 
   return \%opts;
+}
+
+sub _build_http_request {
+  my ($req) = @_;
+  my ($meth, $url, $args, $hdrs) = @$req{qw(method url args headers)};
+
+  my $uri = URI->new($url);
+  $uri->query_form($args);
+
+  $req->{body}              = $uri->query;
+  $hdrs->{'Content-Type'}   = 'application/x-www-form-urlencoded';
+  $hdrs->{'Content-Length'} = length($req->{body});
 }
 
 1;
