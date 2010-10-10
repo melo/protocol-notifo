@@ -12,7 +12,6 @@ use JSON 'decode_json';
 use MIME::Base64 'encode_base64';
 use File::HomeDir;
 use File::Spec::Functions qw( catfile );
-use HTTP::Request::Common qw( POST GET );
 use URI ();
 use namespace::clean;
 
