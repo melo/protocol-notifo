@@ -69,7 +69,7 @@ sub send_notification {
   }
 
   confess("Missing required argument 'msg', ") unless $call{args}{msg};
-  
+
   _build_http_request(\%call);
 
   return \%call;
@@ -112,15 +112,9 @@ sub _build_http_request {
   my $uri = URI->new($url);
   $uri->query_form($args);
 
-  my $r;
-  if ($meth eq 'POST') {
-    $req->{body} = $uri->query;
-    $hdrs->{'Content-Type'} = 'application/x-www-form-urlencoded';
-    $hdrs->{'Content-Length'} = length($req->{body});
-  }
-  elsif ($meth eq 'GET') {
-    $req->{url} = $uri->as_string;
-  }
+  $req->{body}              = $uri->query;
+  $hdrs->{'Content-Type'}   = 'application/x-www-form-urlencoded';
+  $hdrs->{'Content-Length'} = length($req->{body});
 }
 
 1;
