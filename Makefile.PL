@@ -27,12 +27,12 @@ my %WriteMakefileArgs = (
     'Carp' => '0',
     'File::HomeDir' => '0',
     'File::Spec::Functions' => '0',
-    'JSON' => '0',
+    'JSON' => '2.26',
     'MIME::Base64' => '0',
     'URI' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '0.001',
+  'VERSION' => '0.002',
   'test' => {
     'TESTS' => 't/*.t'
   }
