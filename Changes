@@ -1,6 +1,6 @@
 Revision history for Protocol-Notifo
 
-0.003     2010-10-22 10:19:39 Europe/Lisbon
+0.003     2010-10-22 10:20:22 Europe/Lisbon
        * Fix tests in the presence of a $HOME/.notifo.rc
 
 0.002 Mon Oct 11 09:24:07 UTC 2010
