@@ -1,6 +1,6 @@
 package Protocol::Notifo;
 BEGIN {
-  $Protocol::Notifo::VERSION = '0.002';
+  $Protocol::Notifo::VERSION = '0.003';
 }
 
 # ABSTRACT: utilities to build requests for the notifo.com service
@@ -131,7 +131,7 @@ Protocol::Notifo - utilities to build requests for the notifo.com service
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
