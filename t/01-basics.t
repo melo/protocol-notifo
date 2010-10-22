@@ -62,15 +62,17 @@ for my $tc (@test_cases) {
 
 
 ### Bad boys
-throws_ok sub { Protocol::Notifo->new },
-  qr/Missing required parameter 'user' to new[(][)], /,
-  'new() with missing user, expected exception';
-throws_ok sub { Protocol::Notifo->new(user => 'me') },
-  qr/Missing required parameter 'api_key' to new[(][)], /,
-  'new() with missing api_key, expected exception';
+subtest 'bab usage of new()', sub {
+  throws_ok sub { Protocol::Notifo->new },
+    qr/Missing required parameter 'user' to new[(][)], /,
+    'new() with missing user, expected exception';
+  throws_ok sub { Protocol::Notifo->new(user => 'me') },
+    qr/Missing required parameter 'api_key' to new[(][)], /,
+    'new() with missing api_key, expected exception';
 
-throws_ok
-  sub { local $ENV{NOTIFO_CFG} = 't/data/bad_cfg.rc'; Protocol::Notifo->new },
-  qr/Could not parse line 1/, 'Bad cfg file croaks';
+  throws_ok
+    sub { local $ENV{NOTIFO_CFG} = 't/data/bad_cfg.rc'; Protocol::Notifo->new },
+    qr/Could not parse line 1/, 'Bad cfg file croaks';
+};
 
 done_testing();
