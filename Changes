@@ -1,5 +1,8 @@
 Revision history for Protocol-Notifo
 
+{{$NEXT}}
+       * Fix tests in the presence of a $HOME/.notifo.rc
+
 0.002 Mon Oct 11 09:24:07 UTC 2010
        * Fix JSON dependencies, need more recent version
  
