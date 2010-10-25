@@ -62,10 +62,11 @@ for my $tc (@test_cases) {
 
 
 ### Bad boys
-subtest 'bab usage of new()', sub {
+subtest 'bad usage of new()', sub {
   throws_ok sub { local $ENV{HOME} = 't'; Protocol::Notifo->new },
     qr/Missing required parameter 'user' to new[(][)], /,
     'new() with missing user, expected exception';
+
   throws_ok sub { local $ENV{HOME} = 't'; Protocol::Notifo->new(user => 'me') },
     qr/Missing required parameter 'api_key' to new[(][)], /,
     'new() with missing api_key, expected exception';
