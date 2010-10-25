@@ -34,7 +34,7 @@
          "requires" : {
             "Test::Deep" : 0,
             "Test::Exception" : 0,
-            "Test::More" : "0.92"
+            "Test::More" : "0.96"
          }
       }
    },
@@ -47,7 +47,7 @@
          "web" : "http://github.com/melo/protocol-notifo/"
       }
    },
-   "version" : "0.003",
+   "version" : "0.004",
    "x_Dist_Zilla" : {
       "plugins" : [
          {

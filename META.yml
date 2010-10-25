@@ -5,7 +5,7 @@ author:
 build_requires:
   Test::Deep: 0
   Test::Exception: 0
-  Test::More: 0.92
+  Test::More: 0.96
 configure_requires:
   ExtUtils::MakeMaker: 6.31
 dynamic_config: 0
@@ -26,7 +26,7 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/protocol-notifo/
   repository: http://github.com/melo/protocol-notifo.git
-version: 0.003
+version: 0.004
 x_Dist_Zilla:
   plugins:
     -

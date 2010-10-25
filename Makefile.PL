@@ -14,7 +14,7 @@ my %WriteMakefileArgs = (
   'BUILD_REQUIRES' => {
     'Test::Deep' => '0',
     'Test::Exception' => '0',
-    'Test::More' => '0.92'
+    'Test::More' => '0.96'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.31'
@@ -32,7 +32,7 @@ my %WriteMakefileArgs = (
     'URI' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '0.003',
+  'VERSION' => '0.004',
   'test' => {
     'TESTS' => 't/*.t'
   }

@@ -1,5 +1,8 @@
 Revision history for Protocol-Notifo
 
+0.004     2010-10-25 09:40:27 Europe/Lisbon
+       * Require Test::More 0.96, need recent subtest 
+
 0.003     2010-10-22 10:22:02 Europe/Lisbon
        * Fix tests in the presence of a $HOME/.notifo.rc
        * Remove cover_db files from the dist
