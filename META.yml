@@ -26,7 +26,7 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/protocol-notifo/
   repository: http://github.com/melo/protocol-notifo.git
-version: 0.004
+version: 0.005
 x_Dist_Zilla:
   plugins:
     -

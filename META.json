@@ -47,7 +47,7 @@
          "web" : "http://github.com/melo/protocol-notifo/"
       }
    },
-   "version" : "0.004",
+   "version" : "0.005",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
