@@ -1,6 +1,6 @@
 Revision history for Protocol-Notifo
 
-0.005     2010-10-28 10:30:33 Europe/Lisbon
+0.005     2010-10-28 10:44:51 Europe/Lisbon
 
 0.004     2010-10-25 09:40:52 Europe/Lisbon
        * Require Test::More 0.96, need recent subtest 
