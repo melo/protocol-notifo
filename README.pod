@@ -1,0 +1,7 @@
+=encoding utf8
+
+=head1 Protocol-Notifo
+
+Utilities to create requests to the L<notifo.com|http://notifo.com> service.
+
+See L<http://notifo.com> for more information about the services offered.
